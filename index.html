@@ -453,99 +453,115 @@
     </footer>
 
     <script>
-        // Replace this with your actual Cloudflare Worker URL
-        const CLOUDFLARE_WORKER_URL = 'https://test.johnlocke-dummy.workers.dev/';
+    // Replace this with your actual Cloudflare Worker URL
+    const CLOUDFLARE_WORKER_URL = 'https://test.johnlocke-dummy.workers.dev/';
 
-        // DOM Elements
-        const chatBox = document.getElementById('chatBox');
-        const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        const typingIndicator = document.getElementById('typingIndicator');
+    // DOM Elements
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const typingIndicator = document.getElementById('typingIndicator');
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
             });
         });
+    });
 
-        // Navbar background change on scroll
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 100) {
-                document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.95)';
+    // Navbar background change on scroll
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+            document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.95)';
+        } else {
+            document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.9)';
+        }
+    });
+
+    // Send message function - UPDATED VERSION
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessage(message, 'user');
+        userInput.value = '';
+        sendButton.disabled = true;
+
+        // Show typing indicator
+        typingIndicator.style.display = 'block';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            // Send to Cloudflare Worker
+            const response = await fetch(CLOUDFLARE_WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: message
+            });
+
+            const data = await response.json();
+            
+            // Hide typing indicator
+            typingIndicator.style.display = 'none';
+
+            // Debug: log the full response to see what we're getting
+            console.log("Full API Response:", data);
+
+            // IMPROVED: Extract bot response with better error handling
+            let botResponse = "";
+            
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                botResponse = data.candidates[0].content.parts[0].text;
+            } else if (data.choices && data.choices[0] && data.choices[0].message) {
+                botResponse = data.choices[0].message.content;
+            } else if (data.error) {
+                botResponse = `API Error: ${data.error.message || 'Please try again later.'}`;
+            } else if (data.promptFeedback) {
+                botResponse = "The message was blocked for safety reasons. Please try a different question.";
             } else {
-                document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.9)';
+                console.log("Unexpected response format:", data);
+                botResponse = "I'm here! Let me try to respond differently. What would you like to know?";
             }
-        });
+            
+            addMessage(botResponse, 'bot');
 
-        // Send message function
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-
-            // Add user message to chat
-            addMessage(message, 'user');
-            userInput.value = '';
-            sendButton.disabled = true;
-
-            // Show typing indicator
-            typingIndicator.style.display = 'block';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                // Send to Cloudflare Worker
-                const response = await fetch(CLOUDFLARE_WORKER_URL, {
-                    method: 'POST',
-                    body: message
-                });
-
-                const data = await response.json();
-                
-                // Hide typing indicator
-                typingIndicator.style.display = 'none';
-
-                // Extract bot response
-                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                    const botResponse = data.candidates[0].content.parts[0].text;
-                    addMessage(botResponse, 'bot');
-                } else {
-                    addMessage("I apologize, but I'm having trouble processing your request. Please try again.", 'bot');
-                }
-
-            } catch (error) {
-                typingIndicator.style.display = 'none';
-                addMessage("Sorry, I'm currently unavailable. Please check your connection and try again.", 'bot');
-                console.error('Error:', error);
-            }
-
-            sendButton.disabled = false;
-            userInput.focus();
+        } catch (error) {
+            typingIndicator.style.display = 'none';
+            console.error('Network Error:', error);
+            addMessage("Network error: Cannot connect to AI service. Please check your internet connection and make sure your Cloudflare Worker is running.", 'bot');
         }
 
-        // Add message to chat
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
-            messageDiv.textContent = text;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        sendButton.disabled = false;
+        userInput.focus();
+    }
+
+    // Add message to chat
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        messageDiv.textContent = text;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
         }
+    });
 
-        // Event listeners
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Focus input on page load
-        window.addEventListener('load', () => {
-            userInput.focus();
-        });
-    </script>
+    // Focus input on page load
+    window.addEventListener('load', () => {
+        userInput.focus();
+    });
+</script>
 </body>
 </html>
