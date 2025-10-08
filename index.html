@@ -3,565 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VexAI - Interactive AI Chatbot</title>
+    <title>VexAI - Advanced Neural Interface Systems</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #00e0ff;
-            --secondary: #7b42f5;
-            --dark: #1a1a2e;
-            --darker: #16213e;
-            --light: #ffffff;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            color: var(--light);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.2rem 5%;
-            background: rgba(26, 26, 46, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0, 224, 255, 0.2);
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--light);
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 5%;
-            position: relative;
-        }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-content p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 224, 255, 0.3);
-        }
-
-        /* About Section */
-        .about {
-            padding: 6rem 5%;
-            background: rgba(22, 33, 62, 0.7);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: var(--primary);
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-        }
-
-        .about-text p {
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .feature {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .feature:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        /* Custom Chat Interface */
-        .chat-demo {
-            padding: 6rem 5%;
-            text-align: center;
-        }
-
-        .chat-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 224, 255, 0.2);
-        }
-
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            text-align: left;
-        }
-
-        .message {
-            margin-bottom: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 15px;
-            max-width: 80%;
-        }
-
-        .user-message {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .bot-message {
-            background: rgba(255, 255, 255, 0.1);
-            margin-right: auto;
-        }
-
-        .chat-input-container {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-        }
-
-        .chat-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .send-button {
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border: none;
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .send-button:hover {
-            transform: scale(1.05);
-        }
-
-        .send-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .typing-indicator {
-            display: none;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            margin-right: auto;
-            max-width: 80px;
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .typing-dots span {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); }
-        }
-
-        /* Footer */
-        .footer {
-            background: rgba(10, 15, 30, 0.9);
-            padding: 3rem 5%;
-            text-align: center;
-            border-top: 1px solid rgba(0, 224, 255, 0.2);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-links a {
-            color: var(--light);
-            font-size: 1.5rem;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .copyright {
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            .message {
-                max-width: 90%;
-            }
-        }
-
-        /* Floating Animations */
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0% { transform: translate(0, 0px); }
-            50% { transform: translate(0, -15px); }
-            100% { transform: translate(0, 0px); }
-        }
-    </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <a href="#" class="logo">Vex<span>AI</span></a>
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#demo">Chat Demo</a>
-            <a href="#contact">Contact</a>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">VEX</span>
+                <span class="logo-text">AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#technology" class="nav-link">Technology</a>
+                <a href="#interface" class="nav-link">Live Interface</a>
+                <a href="#solutions" class="nav-link">Solutions</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="floating">Experience the Future with VexAI</h1>
-            <p>An intelligent chatbot powered by Google's Gemini AI. Interact, learn, and explore the possibilities of artificial intelligence.</p>
-            <a href="#demo" class="cta-button">Try Chat Demo <i class="fas fa-arrow-down"></i></a>
+            <h1 class="hero-title">
+                <span class="gradient-text">VexAI</span>
+                <span class="hero-subtitle">Advanced Neural Interface Systems</span>
+            </h1>
+            <p class="hero-description">
+                Enterprise-grade artificial intelligence solutions powered by cutting-edge neural architecture. 
+                Transform your business with intelligent automation and real-time cognitive processing.
+            </p>
+            <div class="hero-buttons">
+                <a href="#interface" class="cta-button primary">
+                    <span>Experience Interface</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#technology" class="cta-button secondary">
+                    <span>Our Technology</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 3D Capability Showcase -->
+        <div class="capability-showcase">
+            <div class="showcase-container">
+                <div class="capability-item active">
+                    <div class="capability-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Neural Processing</h3>
+                    <p>Advanced cognitive architecture</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Real-time Analysis</h3>
+                    <p>Instant processing capabilities</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Enterprise Security</h3>
+                    <p>Military-grade encryption</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Multi-language</h3>
+                    <p>Global communication support</p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <h2 class="section-title">About VexAI</h2>
-        <div class="about-content">
-            <div class="about-text">
-                <h3>Powered by Google Gemini AI</h3>
-                <p>VexAI leverages cutting-edge Gemini technology to provide intelligent, contextual conversations that understand your needs and respond with remarkable accuracy.</p>
-                <p>Our custom integration ensures fast, secure, and engaging AI interactions tailored for your exhibition experience.</p>
+    <!-- Technology Section -->
+    <section id="technology" class="technology">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our <span class="gradient-text">Technology</span></h2>
+                <p>Powered by proprietary neural networks and advanced machine learning algorithms</p>
             </div>
-            <div class="features">
-                <div class="feature">
-                    <i class="fas fa-brain"></i>
-                    <h4>Gemini Powered</h4>
-                    <p>Google's latest AI technology</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-bolt"></i>
-                    <h4>Fast Responses</h4>
-                    <p>Real-time AI conversations</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-shield-alt"></i>
-                    <h4>Secure API</h4>
-                    <p>Protected via Cloudflare proxy</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-code"></i>
-                    <h4>Custom Built</h4>
-                    <p>Tailored for your exhibition</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Chat Demo Section -->
-    <section id="demo" class="chat-demo">
-        <h2 class="section-title">Interactive Chat Demo</h2>
-        <div class="chat-container">
-            <p style="margin-bottom: 2rem; opacity: 0.9;">Chat with VexAI powered by Google Gemini. Ask anything!</p>
             
-            <div class="chat-box" id="chatBox">
-                <div class="message bot-message">
-                    Hello! I'm VexAI, powered by Google Gemini. How can I help you today?
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>Neural Architecture</h3>
+                    <p>Custom-built neural networks optimized for real-time cognitive processing and pattern recognition.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Processing</h3>
+                    <p>Advanced machine learning algorithms that continuously evolve and adapt to new data patterns.</p>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Data Intelligence</h3>
+                    <p>Sophisticated data processing pipelines that extract meaningful insights from complex datasets.</p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="typing-indicator" id="typingIndicator">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+    <!-- Live Interface Section -->
+    <section id="interface" class="interface">
+        <div class="container">
+            <div class="section-header">
+                <h2>Live <span class="gradient-text">Interface</span></h2>
+                <p>Experience our advanced AI interface system in real-time</p>
+            </div>
+            
+            <div class="interface-container">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-status">
+                            <div class="status-indicator"></div>
+                            <span>VexAI Neural Interface - Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                <p>Hello. I am VexAI, an advanced neural interface system. How may I assist you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="userInput" placeholder="Type your message here..." class="chat-input">
+                        <button id="sendButton" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="interface-info">
+                    <h3>Enterprise AI Interface</h3>
+                    <p>Our proprietary neural interface provides real-time cognitive processing with enterprise-level security and reliability.</p>
+                    
+                    <div class="interface-stats">
+                        <div class="stat">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">Uptime</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">&lt;100ms</div>
+                            <div class="stat-label">Response Time</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">256-bit</div>
+                            <div class="stat-label">Encryption</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="chat-input-container">
-                <input type="text" class="chat-input" id="userInput" placeholder="Type your message here...">
-                <button class="send-button" id="sendButton">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+    <!-- Solutions Section -->
+    <section id="solutions" class="solutions">
+        <div class="container">
+            <div class="section-header">
+                <h2>Enterprise <span class="gradient-text">Solutions</span></h2>
+                <p>Comprehensive AI solutions for modern business challenges</p>
+            </div>
+            
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="solution-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Business Intelligence</h3>
+                    <p>Advanced analytics and predictive insights for data-driven decision making.</p>
+                </div>
+                
+                <div class="solution-card">
+                    <div class="solution-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Customer Engagement</h3>
+                    <p>Intelligent interaction systems for enhanced customer experience.</p>
+                </div>
+                
+                <div class="solution-card">
+                    <div class="solution-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Process Automation</h3>
+                    <p>Streamline operations with intelligent workflow automation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get In <span class="gradient-text">Touch</span></h2>
+                <p>Ready to transform your business with advanced AI solutions?</p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Enterprise Inquiries</h3>
+                    <p>Contact our solutions team to discuss how VexAI can drive innovation in your organization.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>solutions@vexai.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-AI00</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-building"></i>
+                            <span>VexAI Technologies Headquarters</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="enterpriseForm">
+                        <div class="form-group">
+                            <input type="text" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Business Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Company" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Project Requirements" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <span>Request Consultation</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer" id="contact">
-        <div class="social-links">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-pinterest"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <span class="logo-icon">VEX</span>
+                        <span class="logo-text">AI</span>
+                    </div>
+                    <p>Advanced Neural Interface Systems</p>
+                </div>
+                <div class="footer-copyright">
+                    <p>&copy; 2025 VexAI Technologies. All rights reserved.</p>
+                </div>
+            </div>
         </div>
-        <p class="copyright">Made by Him Editz 💙 | Exhibition 2025 | Powered by Google Gemini AI</p>
     </footer>
 
-    <script>
-    // Replace this with your actual Cloudflare Worker URL
-    const CLOUDFLARE_WORKER_URL = 'https://test.johnlocke-dummy.workers.dev/';
-
-    // DOM Elements
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const sendButton = document.getElementById('sendButton');
-    const typingIndicator = document.getElementById('typingIndicator');
-
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // Navbar background change on scroll
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.95)';
-        } else {
-            document.querySelector('.navbar').style.background = 'rgba(26, 26, 46, 0.9)';
-        }
-    });
-
-    // Send message function - UPDATED VERSION
-    async function sendMessage() {
-        const message = userInput.value.trim();
-        if (!message) return;
-
-        // Add user message to chat
-        addMessage(message, 'user');
-        userInput.value = '';
-        sendButton.disabled = true;
-
-        // Show typing indicator
-        typingIndicator.style.display = 'block';
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        try {
-            // Send to Cloudflare Worker
-            const response = await fetch(CLOUDFLARE_WORKER_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                body: message
-            });
-
-            const data = await response.json();
-            
-            // Hide typing indicator
-            typingIndicator.style.display = 'none';
-
-            // Debug: log the full response to see what we're getting
-            console.log("Full API Response:", data);
-
-            // IMPROVED: Extract bot response with better error handling
-            let botResponse = "";
-            
-            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                botResponse = data.candidates[0].content.parts[0].text;
-            } else if (data.choices && data.choices[0] && data.choices[0].message) {
-                botResponse = data.choices[0].message.content;
-            } else if (data.error) {
-                botResponse = `API Error: ${data.error.message || 'Please try again later.'}`;
-            } else if (data.promptFeedback) {
-                botResponse = "The message was blocked for safety reasons. Please try a different question.";
-            } else {
-                console.log("Unexpected response format:", data);
-                botResponse = "I'm here! Let me try to respond differently. What would you like to know?";
-            }
-            
-            addMessage(botResponse, 'bot');
-
-        } catch (error) {
-            typingIndicator.style.display = 'none';
-            console.error('Network Error:', error);
-            addMessage("Network error: Cannot connect to AI service. Please check your internet connection and make sure your Cloudflare Worker is running.", 'bot');
-        }
-
-        sendButton.disabled = false;
-        userInput.focus();
-    }
-
-    // Add message to chat
-    function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}-message`;
-        messageDiv.textContent = text;
-        chatBox.appendChild(messageDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    // Event listeners
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    // Focus input on page load
-    window.addEventListener('load', () => {
-        userInput.focus();
-    });
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
